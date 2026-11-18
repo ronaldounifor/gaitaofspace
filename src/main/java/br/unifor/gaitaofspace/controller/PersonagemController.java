@@ -3,6 +3,7 @@ package br.unifor.gaitaofspace.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,33 +12,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.unifor.gaitaofspace.model.Personagem;
+import br.unifor.gaitaofspace.service.PersonagemService;
 
 @RestController 
 public class PersonagemController {
-    private ArrayList<Personagem> personagens = new ArrayList<>(Arrays.asList(
-        new Personagem("Zeuda", 12, 4),
-        new Personagem("Lincon", 2, 1)
-    ));
+    @Autowired
+    private PersonagemService service;
+
     @GetMapping("/personagens")
-    public ArrayList<String> listarTodosNomes() {
-        ArrayList<String> nomes = new ArrayList<>();
-        for (Personagem personagem : personagens)
-            nomes.add(personagem.getNome());
-        
-        return nomes;
+    public ArrayList<String> listarTodosNomes() {   
+        return service.getHeroes();
     }
-    @GetMapping("/personagens/{id}")
-    public Personagem listarDetalhes(@PathVariable int id) {
-        return personagens.get(id);
+
+    @GetMapping("/personagens/{nome}")
+    public Personagem listarDetalhes(@PathVariable String nome) {
+        return service.getHero(nome);
     }
 
     @PostMapping("/personagens")
     public void criarPersonagem(@RequestBody Personagem novoPersonagem) {
-        personagens.add(novoPersonagem);
+        service.add(novoPersonagem);
     }
 
-    @DeleteMapping("/personagens/{id}")
-    public void deletarPersonagem(@PathVariable int id) {
-        personagens.remove(id);
-    }
+    // @DeleteMapping("/personagens/{id}")
+    // public void deletarPersonagem(@PathVariable int id) {
+    //     personagens.remove(id);
+    // }
 }
